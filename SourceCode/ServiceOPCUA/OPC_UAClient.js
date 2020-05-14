@@ -8,7 +8,8 @@ const
 var IP_Host = "solution.phuctruong.net";
 let clients = [];
 let k = 1;
-for (var i = 4335; i < 4435; i++) {
+//4435
+for (var i = 4335; i < 4336; i++) {
   clients.push({IP:IP_Host,port: i, HostName: "Sever_"+k});
   k = k +1;
 }
@@ -84,7 +85,7 @@ async.series([
                 attributeId: 13
             },
             {
-                samplingInterval: 100,
+                samplingInterval: 200,
                 discardOldest: true,
                 queueSize: 10
             });

@@ -1,4 +1,4 @@
-var  urdb ='    	mongodb://demo01:abcd0123@124.158.10.133:27017/srv_demo_1?authSource=admin',
+var  urdb ='mongodb://demo01:abcd0123@124.158.10.133:27017/svr_gateway_01?authSource=admin',
 mongoose = require('mongoose');
  mongoose.connect(urdb, {useNewUrlParser: true, useUnifiedTopology: true});
 var gatewaySchema = new mongoose.Schema({
@@ -7,21 +7,37 @@ var gatewaySchema = new mongoose.Schema({
 	ip: String,
 	port: Number,
 	username: Number,
-	password: String
+	password: String,
+	tagname :Object
+	
 });
 var gateway = mongoose.model('gateway', gatewaySchema,'gateway_config');
-
-gateway.find({},function(err,docs)
+let para_gateway=[];
+let tagname =[];
+  gateway.find({},function(err,docs)
 	{
-		var Data_Config = [];
+		//var Data_Config = [];
 		if (docs.length >=1)
 		{
-			//console.log("Data from DB name",docs[0].ip);
+			//console.log("Data from DB name",docs[0]);
+			//map 
+			para_gateway.push(docs[0]);
+		//para_gateway[0].tagname.name);
+		var data_con = para_gateway[0].tagname;
+		data_con.forEach(function(a)
+		{
+			tagname.push(a.name);
+			//console.log('dd',dm[0]);
+			//console.log("gte",tagname);
+		})
+		//console.log("Tag",tagname);
 		}
+		
 		else
 		{
 			//console.log("No config!!!");
 		}
+		console.log("tagname",tagname);
 	})
 	
 	
@@ -59,7 +75,7 @@ gateway.find({},function(err,docs)
             // send records as a response
             else
 			{
-				console.log("Data MS SQL",recordset.recordsets[0][1]);
+				//console.log("Data MS SQL",recordset.recordsets[0][1]);
 			}
 
         });
