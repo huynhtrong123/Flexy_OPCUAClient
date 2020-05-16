@@ -1,84 +1,116 @@
 var  urdb ='mongodb://demo01:abcd0123@124.158.10.133:27017/svr_gateway_01?authSource=admin',
 mongoose = require('mongoose');
  mongoose.connect(urdb, {useNewUrlParser: true, useUnifiedTopology: true});
-var gatewaySchema = new mongoose.Schema({
+var siteTagSchema = new mongoose.Schema({
+	name: String,
+	description: String,
+	default: Number,
+	scale: Number,
+	plus: Number,
+	unit: String,
+	is_active: Number,
+	is_display: Number,
+	priority: Number,
+	note: String,
+	site: {type: mongoose.Schema.Types.ObjectId, ref: 'Site'},
+	tag: {type: mongoose.Schema.Types.ObjectId, ref: 'Tag'}
+	// parameters: [{type: mongoose.Schema.Types.ObjectId}],
+	// gc_parameters: [{type: mongoose.Schema.Types.ObjectId}]
+});
+
+var SiteTag = mongoose.model('SiteTag', siteTagSchema, 'site_tag');
+var tagSchema = new mongoose.Schema({
+	name: String,
+	description: String,
+	value: Number,
+	unit: Number,
+	is_active: Number,
+	is_display: Number,
+	priority: Number,
+	note: String,
+	// parameters: [{type: mongoose.Schema.Types.ObjectId}],
+	// gc_parameters: [{type: mongoose.Schema.Types.ObjectId}]
+});
+
+var Tag = mongoose.model('Tag', tagSchema, 'tag');
+var stationSchema = new mongoose.Schema({
 	site_id: String,
 	site_name: String,
+	site_address: String,
 	ip: String,
 	port: Number,
-	username: Number,
-	password: String,
-	tagname :Object
-	
+	username : String,
+	password : String,
+	is_active: Number,
+	is_display: Number,
+	priority: Number,
+	note: String,
+	tags: [{ type: mongoose.Schema.Types.ObjectId }],
+	//site_tags: [{ type: mongoose.Schema.Types.ObjectId }],
+	// parameters: [{type: mongoose.Schema.Types.ObjectId}],
+	// gc_parameters: [{type: mongoose.Schema.Types.ObjectId}]
 });
-var gateway = mongoose.model('gateway', gatewaySchema,'gateway_config');
+
+var Site = mongoose.model('Site', stationSchema, 'site');
 let para_gateway=[];
 let tagname =[];
-  gateway.find({},function(err,docs)
+///
+
+
+   let config_db =  Getconfig();
+   config_db.then(function(doc)
+   {
+	console.log("config",doc);
+   })
+	
+
+	async function findTagName(siteID)
+	{
+		var  sitetags = await SiteTag.find({site: siteID})
+						 .populate('site')
+						 .populate('tag')
+						 .sort({ priority: 'asc' })
+						 .exec();
+					 
+		console.log('site',sitetags);
+						 
+		//return 	sitetags			 
+	}
+	
+async function Getconfig()
+{let clientConfig = [];
+	 await Site.find({}, function(err,docs)
 	{
 		//var Data_Config = [];
 		if (docs.length >=1)
 		{
 			//console.log("Data from DB name",docs[0]);
 			//map 
-			para_gateway.push(docs[0]);
+			//para_gateway.push(docs[0]);
 		//para_gateway[0].tagname.name);
-		var data_con = para_gateway[0].tagname;
-		data_con.forEach(function(a)
+		//var data_con = para_gateway[0].tagname;
+		//var sitetag0= docs[0].id;
+		//console.log("Site", docs[0]);
+		
+		//console.log("tag",sitetags);
+		//console.log("siteID",docs[0].id);
+		/*var  sitetag = await SiteTag.find({site: doc.id})
+						 .populate('site')
+						 .populate('tag')
+						 .sort({ priority: 'asc' })
+						 .exec();*/
+		docs.forEach(function(doc)
 		{
-			tagname.push(a.name);
-			//console.log('dd',dm[0]);
-			//console.log("gte",tagname);
-		})
-		//console.log("Tag",tagname);
+			
+		 clientConfig.push({ip:doc.ip,port: doc.port});
+		})	
 		}
 		
 		else
 		{
 			//console.log("No config!!!");
 		}
-		console.log("tagname",tagname);
+		//console.log("tagname",tagname[0]);
 	})
-	
-	
-	//*******************MS SQL ***********************//
-	  // config for your database
-    const sqlConfig = {
-  password: 'conheo123',
-  database: 'S71200',
-  stream: false,
-  options: {
-    enableArithAbort: true,
-    encrypt: true
-  },
-  port: 54863,
-  user: 'sa',
-  server: 'DUYTRONGPC',
+	return clientConfig;
 }
-
- var sql = require("mssql");
-
-      
-
-    // connect to your database
-    sql.connect(sqlConfig, function (err) {
-
-        if (err) console.log(err);
-		else
-		{
-			console.log("okk");
-			var request = new sql.Request();
-	 request.query('select * from tblEmployee', function (err, recordset) {
-
-            if (err) console.log(err)
-
-            // send records as a response
-            else
-			{
-				//console.log("Data MS SQL",recordset.recordsets[0][1]);
-			}
-
-        });
-		}
-	});
-	
