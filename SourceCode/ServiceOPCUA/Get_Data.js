@@ -58,27 +58,21 @@ let tagname =[];
 
 
    let config_db =  Getconfig();
-   config_db.then(function(doc)
+   config_db.then(function(docs)
    {
-	console.log("config",doc);
+	console.log("Data",docs);
+	
+	
    })
+   
 	
 
-	async function findTagName(siteID)
-	{
-		var  sitetags = await SiteTag.find({site: siteID})
-						 .populate('site')
-						 .populate('tag')
-						 .sort({ priority: 'asc' })
-						 .exec();
-					 
-		console.log('site',sitetags);
-						 
-		//return 	sitetags			 
-	}
+	
 	
 async function Getconfig()
-{let clientConfig = [];
+{
+	let clientConfig = [];
+	let tag_array =[];
 	 await Site.find({}, function(err,docs)
 	{
 		//var Data_Config = [];
@@ -99,10 +93,25 @@ async function Getconfig()
 						 .populate('tag')
 						 .sort({ priority: 'asc' })
 						 .exec();*/
-		docs.forEach(function(doc)
+						 
+		docs.forEach(async function(doc)
 		{
 			
-		 clientConfig.push({ip:doc.ip,port: doc.port});
+		  clientConfig.push({ip:doc.ip,port: doc.port, user: doc.username,pass:doc.password,siteid:doc.site_id,sitename:doc.site_name});
+		var  sitetags = await SiteTag.find({site: doc.id})
+						 .populate('site')
+						 .populate('tag')
+						 .sort({ priority: 'asc' })
+						 .exec();
+						// console.log("tag",sitetags);
+						 console.log("////");
+		tag_array=[];
+		
+		await sitetags.forEach(async function(tg){
+		 tag_array.push({name: tg.tag.name,value:0});	
+		})
+			console.log("tag = ",tag_array);
+			
 		})	
 		}
 		
