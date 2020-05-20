@@ -1,0 +1,39 @@
+const sqlConfig = {
+  password: 'conheo123',
+  database: 'S71200',
+  stream: false,
+  options: {
+    enableArithAbort: true,
+    encrypt: true
+  },
+  port: 54863,
+  user: 'sa',
+  server: 'DUYTRONGPC',
+}
+
+ var sql = require("mssql");
+insert_data(33.1);
+      function insert_data(value)
+	  {
+
+    // connect to your database
+    sql.connect(sqlConfig, function (err) {
+
+        if (err) console.log(err);
+		else
+		{
+			console.log("okk");
+			var request = new sql.Request();
+			request.input('vatag1',sql.Float,value);
+			 request.query("INSERT INTO Test (Tagname, Value) VALUES ('tag1',@vatag1)", function(err, recordsets) {
+				 
+
+        //connection.close();
+    });
+		}
+	 
+		
+
+
+	})
+	  }

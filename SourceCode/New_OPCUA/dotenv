@@ -1,0 +1,6 @@
+MONGO_URL=mongodb://demo01:abcd0123@124.158.10.133:27017/svr_gateway_01?authSource=admin
+
+//MONGO_URL=mongodb://124.158.10.133:27017/srv_demo_1
+//MONGO_USER=demo
+//MONGO_PASS=abcd1234
+PORT=4110
